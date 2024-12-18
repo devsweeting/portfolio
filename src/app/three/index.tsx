@@ -1,18 +1,12 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import * as THREE from "three";
-import { Canvas, useFrame, useThree, extend } from "@react-three/fiber";
-// Environment
-import { useTexture, useEnvironment } from "@react-three/drei";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { useTexture, Environment } from "@react-three/drei";
 import { Physics, useSphere } from "@react-three/cannon";
 import { EffectComposer, N8AO, SMAA, Bloom } from "@react-three/postprocessing";
 import { useControls } from "leva";
 import { Outlines } from "./Outlines";
-import { InstancedBufferAttribute } from "three";
-import { Leva } from "leva";
-
-// https://r3f.docs.pmnd.rs/api/objects#using-3rd-party-objects-declaratively
-extend({ Leva });
 
 const rfs = THREE.MathUtils.randFloatSpread;
 const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
@@ -20,28 +14,35 @@ const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
 //Material on Sphere
 const baubleMaterial = new THREE.MeshStandardMaterial({
   color: "white",
-  roughness: 0.2,
-  metalness: 1.0,
+  roughness: 0,
+  // metalness: 1.0,
   envMapIntensity: 1,
 });
 
 export default function Demo3d() {
   const { background } = useControls({
     background: {
+      label: "Background",
       options: {
         White: "#dfdfdf",
-        Red: "#ff0000",
-        Green: "#00ff00",
-        Blue: "#0000ff",
-        Yellow: "#ffff00",
-        Purple: "#800080",
+        Red: "#F0605D",
+        Green: "#73F587",
+        Blue: "#7991DB",
+        Yellow: "#FAF24F",
+        Purple: "#D148E1",
       },
-      value: "#dfdfdf", // Default color
+      value: "#dfdfdf",
     },
   });
 
   const { brightness } = useControls({
-    brightness: { value: 2.5, step: 0.5, min: 0, max: 2.5 },
+    brightness: {
+      label: "Brightness",
+      value: 0.5,
+      step: 0.5,
+      min: 0,
+      max: 2.5,
+    },
   });
 
   return (
@@ -51,32 +52,29 @@ export default function Demo3d() {
       dpr={[1, 1.5]}
       camera={{ position: [0, 0, 20], fov: 35, near: 1, far: 40 }}
     >
-      {/* <Leva
-        fill // default = false,  true makes the pane fill the parent dom node it's rendered in
-        flat // default = false,  true removes border radius and shadow
-        oneLineLabels // default = false, alternative layout for labels, with labels and fields on separate rows
-        collapsed // default = false, when true the GUI is collpased
-      /> */}
-      {/* O.G is 0.5 */}
-      <ambientLight intensity={brightness} />
+      {/* Original lighting in Demo is 0.5 */}
+      {/* <ambientLight intensity={brightness} /> */}
 
       {/* Test */}
-      {/* <directionalLight
+      <directionalLight
         position={[5, 10, 5]}
-        intensity={0.3}
+        intensity={0.5}
         castShadow
         shadow-mapSize={[1024, 1024]}
-      /> */}
+      />
 
+      {/* Original Background Color */}
       <color attach="background" args={[background]} />
-      <spotLight
+
+      {/* Original light shadow effect */}
+      {/* <spotLight
         intensity={1}
         angle={0.2}
         penumbra={1}
         position={[30, 30, 30]}
         castShadow
         shadow-mapSize={[512, 512]}
-      />
+      /> */}
 
       {/* Physics and 3D objects */}
       <Physics gravity={[0, 2, 0]} iterations={10}>
@@ -84,8 +82,10 @@ export default function Demo3d() {
         <Clump />
       </Physics>
 
+      <Environment files="/images/adamsbridge.hdr" />
+
       {/* Postprocessing effects */}
-      <EffectComposer>
+      <EffectComposer multisampling={0}>
         <N8AO
           halfRes
           color="black"
@@ -95,7 +95,7 @@ export default function Demo3d() {
           denoiseSamples={4}
           quality="high"
         />
-        <Bloom mipmapBlur levels={7} intensity={5} />
+        <Bloom mipmapBlur levels={7} intensity={1} />
         <SMAA />
       </EffectComposer>
     </Canvas>
@@ -103,22 +103,24 @@ export default function Demo3d() {
 }
 
 function Clump({ mat = new THREE.Matrix4(), vec = new THREE.Vector3() }) {
+  const texture = useTexture("/images/cross.jpg");
+
   const { outlines } = useControls({
-    outlines: { value: 0.0, step: 0.01, min: 0, max: 0.05 },
+    outlines: { label: "Outlines", value: 0.0, step: 0.01, min: 0, max: 0.05 },
   });
-  // console.log("Outlines:", outlines);
 
   const { sphereColor } = useControls({
     sphereColor: {
+      label: "Color",
       options: {
         White: "#ffffff",
-        Red: "#ff0000",
-        Green: "#00ff00",
-        Blue: "#0000ff",
-        Yellow: "#ffff00",
-        Purple: "#800080",
+        Red: "#EF1F14",
+        Green: "#2FF44F",
+        Blue: "#2048DB",
+        Yellow: "#FAF436",
+        Purple: "#D212E1",
       },
-      value: "#ffffff", // Default color
+      value: "#ffffff",
     },
   });
 
@@ -128,8 +130,6 @@ function Clump({ mat = new THREE.Matrix4(), vec = new THREE.Vector3() }) {
   // });
   const quantity = 40;
 
-  // console.log("colors", sphereColor);
-  const texture = useTexture("/images/cross.jpg");
   const [ref, api] = useSphere(() => ({
     args: [1],
     mass: 1,
@@ -138,41 +138,30 @@ function Clump({ mat = new THREE.Matrix4(), vec = new THREE.Vector3() }) {
     position: [rfs(20), rfs(20), rfs(20)],
   }));
   useFrame((state) => {
-    console.log("state in useframe", state);
     for (let i = 0; i < quantity; i++) {
       // Get current whereabouts of the instanced sphere
       if (ref.current !== null) {
-        ref.current.getMatrixAt(i, mat);
-        // Normalize the position and multiply by a negative force.
-        // This is enough to drive it towards the center-point.
-        api
-          .at(i)
-          .applyForce(
-            vec
-              .setFromMatrixPosition(mat)
-              .normalize()
-              .multiplyScalar(-40)
-              .toArray(),
-            [0, 0, 0]
-          );
+        // Type casting ref.current to InstancedMesh
+        const instancedMesh = ref.current as THREE.InstancedMesh;
+        // Make sure getMatrixAt is available
+        if (instancedMesh) {
+          instancedMesh.getMatrixAt(i, mat);
+          // Normalize the position and multiply by a negative force.
+          // This is enough to drive it towards the center-point.
+          api
+            .at(i)
+            .applyForce(
+              vec
+                .setFromMatrixPosition(mat)
+                .normalize()
+                .multiplyScalar(-40)
+                .toArray(),
+              [0, 0, 0]
+            );
+        }
       }
     }
   });
-
-  // Creates sphere's in random colors
-  // useEffect(() => {
-  //   const colors = [];
-  //   for (let i = 0; i < 40; i++) {
-  //     colors.push(Math.random(), Math.random(), Math.random()); // Random RGB values
-  //   }
-  //   const colorAttribute = new InstancedBufferAttribute(
-  //     new Float32Array(colors),
-  //     3
-  //   );
-  //   ref?.current?.geometry?.setAttribute("color", colorAttribute);
-  // }, [ref]);
-
-  useEnvironment;
 
   return (
     <instancedMesh
@@ -189,7 +178,6 @@ function Clump({ mat = new THREE.Matrix4(), vec = new THREE.Vector3() }) {
 
 function Pointer() {
   const viewport = useThree((state) => state.viewport);
-  console.log("viewport", viewport);
   const [ref, api] = useSphere(() => ({
     type: "Kinematic",
     args: [3],
@@ -206,7 +194,7 @@ function Pointer() {
     <mesh ref={ref} scale={0.2}>
       <sphereGeometry />
       <meshBasicMaterial color={[4, 4, 4]} toneMapped={false} />
-      <pointLight intensity={2} distance={15} />
+      <pointLight intensity={8} distance={10} />
     </mesh>
   );
 }
