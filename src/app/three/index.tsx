@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useRef } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useTexture, Environment } from "@react-three/drei";
@@ -7,6 +7,7 @@ import { Physics, useSphere } from "@react-three/cannon";
 import { EffectComposer, N8AO, SMAA, Bloom } from "@react-three/postprocessing";
 import { useControls } from "leva";
 import { Outlines } from "./Outlines";
+import { Mesh } from "three";
 
 const rfs = THREE.MathUtils.randFloatSpread;
 const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
@@ -130,7 +131,7 @@ function Clump({ mat = new THREE.Matrix4(), vec = new THREE.Vector3() }) {
   // });
   const quantity = 40;
 
-  const [ref, api] = useSphere(() => ({
+  const [ref, api] = useSphere<THREE.InstancedMesh>(() => ({
     args: [1],
     mass: 1,
     angularDamping: 0.1,
@@ -178,11 +179,12 @@ function Clump({ mat = new THREE.Matrix4(), vec = new THREE.Vector3() }) {
 
 function Pointer() {
   const viewport = useThree((state) => state.viewport);
-  const [ref, api] = useSphere(() => ({
+  const [ref, api] = useSphere<Mesh>(() => ({
     type: "Kinematic",
     args: [3],
     position: [0, 0, 0],
   }));
+
   useFrame((state) =>
     api.position.set(
       (state.pointer.x * viewport.width) / 2,
@@ -190,6 +192,8 @@ function Pointer() {
       0
     )
   );
+
+  // Explicitly cast ref to Mesh type
   return (
     <mesh ref={ref} scale={0.2}>
       <sphereGeometry />

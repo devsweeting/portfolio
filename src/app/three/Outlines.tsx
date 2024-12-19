@@ -99,9 +99,7 @@ export function Outlines({
         group.remove(mesh);
       };
     }
-
-    // console.log("ref geometry", ref.current?.parent?.geometry);
-  }, [angle, material, ref.current?.parent?.geometry]);
+  }, [angle, material, (ref.current?.parent as THREE.Mesh)?.geometry]);
 
   React.useLayoutEffect(() => {
     const group = ref.current;
