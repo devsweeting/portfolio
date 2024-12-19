@@ -15,13 +15,13 @@ const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
 //Material on Sphere
 const baubleMaterial = new THREE.MeshStandardMaterial({
   color: "white",
-  roughness: 0,
-  // metalness: 1.0,
+  roughness: 0.5,
+  metalness: 1.0,
   envMapIntensity: 1,
 });
 
 export default function Demo3d() {
-  const { background } = useControls({
+  const { background, brightness } = useControls({
     background: {
       label: "Background",
       options: {
@@ -34,9 +34,6 @@ export default function Demo3d() {
       },
       value: "#dfdfdf",
     },
-  });
-
-  const { brightness } = useControls({
     brightness: {
       label: "Brightness",
       value: 0.5,
@@ -104,11 +101,20 @@ export default function Demo3d() {
 }
 
 function Clump({ mat = new THREE.Matrix4(), vec = new THREE.Vector3() }) {
-  const texture = useTexture("/images/cross.jpg");
-
-  const { outlines } = useControls({
+  const { image, outlines } = useControls({
+    image: {
+      label: "Image",
+      options: {
+        Blackberry: "/images/blackberry.png",
+        Cross: "/images/cross.jpg",
+        "My Cat": "/images/mycat.png",
+      },
+      value: "/images/cross.jpg",
+    },
     outlines: { label: "Outlines", value: 0.0, step: 0.01, min: 0, max: 0.05 },
   });
+
+  const texture = useTexture(image);
 
   const { sphereColor } = useControls({
     sphereColor: {
