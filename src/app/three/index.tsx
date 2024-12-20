@@ -20,29 +20,19 @@ const baubleMaterial = new THREE.MeshStandardMaterial({
   envMapIntensity: 1,
 });
 
-export default function Demo3d() {
-  const { background, brightness } = useControls({
-    background: {
-      label: "Background",
-      options: {
-        White: "#dfdfdf",
-        Red: "#F0605D",
-        Green: "#73F587",
-        Blue: "#7991DB",
-        Yellow: "#FAF24F",
-        Purple: "#D148E1",
-      },
-      value: "#dfdfdf",
-    },
-    brightness: {
-      label: "Brightness",
-      value: 0.5,
-      step: 0.5,
-      min: 0,
-      max: 2.5,
-    },
-  });
-
+export default function Spheres({
+  background = "#dfdfdf",
+  brightness = 0.5,
+  sphereColor = "#ffffff",
+  outlines = 0.0,
+  image = "/images/cross.jpg",
+}: {
+  background: string;
+  brightness: number;
+  sphereColor: string;
+  outlines: number;
+  image: string;
+}) {
   return (
     <Canvas
       shadows
@@ -51,15 +41,15 @@ export default function Demo3d() {
       camera={{ position: [0, 0, 20], fov: 35, near: 1, far: 40 }}
     >
       {/* Original lighting in Demo is 0.5 */}
-      {/* <ambientLight intensity={brightness} /> */}
+      <ambientLight intensity={brightness} />
 
       {/* Test */}
-      <directionalLight
+      {/* <directionalLight
         position={[5, 10, 5]}
         intensity={0.5}
         castShadow
         shadow-mapSize={[1024, 1024]}
-      />
+      /> */}
 
       {/* Original Background Color */}
       <color attach="background" args={[background]} />
@@ -77,7 +67,7 @@ export default function Demo3d() {
       {/* Physics and 3D objects */}
       <Physics gravity={[0, 2, 0]} iterations={10}>
         <Pointer />
-        <Clump />
+        <Clump sphereColor={sphereColor} image={image} outlines={outlines} />
       </Physics>
 
       <Environment files="/images/adamsbridge.hdr" />
@@ -100,36 +90,20 @@ export default function Demo3d() {
   );
 }
 
-function Clump({ mat = new THREE.Matrix4(), vec = new THREE.Vector3() }) {
-  const { image, outlines } = useControls({
-    image: {
-      label: "Image",
-      options: {
-        Blackberry: "/images/blackberry.png",
-        Cross: "/images/cross.jpg",
-        "My Cat": "/images/mycat.png",
-      },
-      value: "/images/cross.jpg",
-    },
-    outlines: { label: "Outlines", value: 0.0, step: 0.01, min: 0, max: 0.05 },
-  });
-
+function Clump({
+  sphereColor,
+  image,
+  outlines,
+  mat = new THREE.Matrix4(),
+  vec = new THREE.Vector3(),
+}: {
+  sphereColor: string;
+  image: string;
+  outlines: number;
+  mat?: THREE.Matrix4;
+  vec?: THREE.Vector3;
+}) {
   const texture = useTexture(image);
-
-  const { sphereColor } = useControls({
-    sphereColor: {
-      label: "Color",
-      options: {
-        White: "#ffffff",
-        Red: "#EF1F14",
-        Green: "#2FF44F",
-        Blue: "#2048DB",
-        Yellow: "#FAF436",
-        Purple: "#D212E1",
-      },
-      value: "#ffffff",
-    },
-  });
 
   // uncomment to adjust
   // const { quantity } = useControls({

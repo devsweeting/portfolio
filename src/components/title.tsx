@@ -15,7 +15,7 @@ const libreBarcode = localFont({
 export const Wrapper: React.FC<WrapperProps> = ({ children }) => {
   return (
     <div
-      className={`absolute top-0 left-0 w-full sm:w-2/3 float-left p-8 z-50 flex items-center justify-center sm:justify-start`}
+      className={`absolute top-10 left-0 w-full sm:w-2/3 float-left p-8 z-50 flex items-center justify-center sm:justify-start`}
     >
       {children}
     </div>
