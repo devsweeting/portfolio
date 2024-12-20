@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useTexture, Environment } from "@react-three/drei";
@@ -198,6 +198,26 @@ function Pointer() {
       0
     )
   );
+
+  // DEV TEST -- For mobile touch events
+  useEffect(() => {
+    const handleTouchMove = (event: TouchEvent) => {
+      const touch = event.touches[0]; // Get the first touch point
+      const pointerX =
+        (touch.clientX / window.innerWidth) * viewport.width -
+        viewport.width / 2;
+      const pointerY =
+        (touch.clientY / window.innerHeight) * viewport.height -
+        viewport.height / 2;
+
+      api.position.set(pointerX, pointerY, 0);
+    };
+
+    window.addEventListener("touchmove", handleTouchMove);
+    return () => {
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, [viewport, api]);
 
   // Explicitly cast ref to Mesh type
   return (

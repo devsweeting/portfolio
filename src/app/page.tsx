@@ -10,33 +10,32 @@ import Socials from "@/components/Socials";
 export default function Home() {
   // DEV NOTE -- TEST
   // Sets a duration of 3 seconds to show the spinner on every page load
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setLoading(false);
-    }, 3000); // Adjust the duration as needed
+  // const [loading, setLoading] = useState(true);
+  // useEffect(() => {
+  //   const timeout = setTimeout(() => {
+  //     setLoading(false);
+  //   }, 3000); // Adjust the duration as needed
 
-    return () => clearTimeout(timeout);
-  }, []);
+  //   return () => clearTimeout(timeout);
+  // }, []);
 
   return (
     <>
-      {/* <PageContainer>
+      <PageContainer>
         <Title />
-        <Suspense fallback={null}>
+        <Suspense fallback={<LoadingSpinner />}>
           <Demo3d />
         </Suspense>
-      </PageContainer> */}
+      </PageContainer>
 
-      <PageContainer>
+      {/* <PageContainer>
         {!loading && <Title />}
         <Suspense fallback={null}>
           {loading ? <LoadingSpinner /> : <Demo3d />}
-          {/* <Demo3d /> */}
         </Suspense>
 
         <Socials />
-      </PageContainer>
+      </PageContainer> */}
     </>
   );
 }
