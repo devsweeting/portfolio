@@ -1,18 +1,36 @@
-import { useState, useEffect } from "react";
+import * as React from "react";
 
-const useIsMobile = (breakpoint = 768) => {
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= breakpoint);
+const useIsMobile = (mobileScreenSize = 768) => {
+  if (typeof window.matchMedia !== "function") {
+    throw Error("matchMedia not supported by browser!");
+  }
+  const [isMobile, setIsMobile] = React.useState(
+    window.matchMedia(`(max-width: ${mobileScreenSize}px)`).matches
+  );
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= breakpoint);
-    };
+  const checkIsMobile = React.useCallback((event: MediaQueryListEvent) => {
+    setIsMobile(event.matches);
+  }, []);
 
-    window.addEventListener("resize", handleResize);
+  React.useEffect(() => {
+    const mediaListener = window.matchMedia(
+      `(max-width: ${mobileScreenSize}px)`
+    );
+    // try catch used to fallback for browser compatibility
+    try {
+      mediaListener.addEventListener("change", checkIsMobile);
+    } catch {
+      mediaListener.addListener(checkIsMobile);
+    }
+
     return () => {
-      window.removeEventListener("resize", handleResize);
+      try {
+        mediaListener.removeEventListener("change", checkIsMobile);
+      } catch {
+        mediaListener.removeListener(checkIsMobile);
+      }
     };
-  }, [breakpoint]);
+  }, [mobileScreenSize]);
 
   return isMobile;
 };
