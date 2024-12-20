@@ -35,9 +35,9 @@ export default function Spheres({
 }) {
   const isMobile = useIsMobile();
 
-  React.useEffect(() => {
-    console.log("isMobile: ", isMobile);
-  }, [isMobile]);
+  // React.useEffect(() => {
+  //   console.log("isMobile: ", isMobile);
+  // }, [isMobile]);
 
   return (
     <Canvas
