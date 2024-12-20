@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useEffect } from "react";
+import React, { useEffect } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useTexture, Environment } from "@react-three/drei";
@@ -7,6 +7,7 @@ import { Physics, useSphere } from "@react-three/cannon";
 import { EffectComposer, N8AO, SMAA, Bloom } from "@react-three/postprocessing";
 import { Outlines } from "./Outlines";
 import { Mesh } from "three";
+import useIsMobile from "../utils/useIsMobile";
 
 const rfs = THREE.MathUtils.randFloatSpread;
 const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
@@ -32,12 +33,23 @@ export default function Spheres({
   outlines: number;
   image: string;
 }) {
+  const isMobile = useIsMobile();
+
+  React.useEffect(() => {
+    console.log("isMobile: ", isMobile);
+  }, [isMobile]);
+
   return (
     <Canvas
       shadows
       gl={{ antialias: false }}
       dpr={[1, 1.5]}
-      camera={{ position: [0, 0, 20], fov: 35, near: 1, far: 40 }}
+      camera={{
+        position: [0, 0, isMobile ? 30 : 20], // Zoom out camera for mobile
+        fov: 35,
+        near: 1,
+        far: 40,
+      }}
     >
       {/* Original lighting in Demo is 0.5 */}
       <ambientLight intensity={brightness} />
@@ -103,7 +115,6 @@ function Clump({
   vec?: THREE.Vector3;
 }) {
   const texture = useTexture(image);
-
   // uncomment to adjust
   // const { quantity } = useControls({
   //   quantity: { value: 40, step: 1, min: 1, max: 40 }, // Initial value: 1

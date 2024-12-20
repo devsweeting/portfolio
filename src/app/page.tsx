@@ -55,9 +55,6 @@ export default function Home() {
   });
 
   const isMobile = useIsMobile();
-  // React.useEffect(() => {
-  //   console.log("isMobile: ", isMobile);
-  // }, [isMobile]);
 
   return (
     <>
