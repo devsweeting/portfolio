@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Suspense, useState, useEffect } from "react";
+import { Suspense } from "react";
 import { PageContainer } from "@/components/pageLayout";
 import Title from "@/components/title";
 import Spheres from "./three";
@@ -10,17 +10,6 @@ import { Leva, useControls } from "leva";
 import useIsMobile from "./utils/useIsMobile";
 
 export default function Home() {
-  // DEV NOTE -- TEST
-  // Sets a duration of 3 seconds to show the spinner on every page load
-  // const [loading, setLoading] = useState(true);
-  // useEffect(() => {
-  //   const timeout = setTimeout(() => {
-  //     setLoading(false);
-  //   }, 3000); // Adjust the duration as needed
-
-  //   return () => clearTimeout(timeout);
-  // }, []);
-
   const { image, outlines, sphereColor, background, brightness } = useControls({
     image: {
       label: "Image",
@@ -66,14 +55,13 @@ export default function Home() {
   });
 
   const isMobile = useIsMobile();
-  React.useEffect(() => {
-    console.log("isMobile: ", isMobile);
-  }, [isMobile]);
+  // React.useEffect(() => {
+  //   console.log("isMobile: ", isMobile);
+  // }, [isMobile]);
 
   return (
     <>
       <PageContainer>
-        <Title />
         {isMobile ? <Leva fill flat collapsed /> : <Leva />}
 
         <Suspense fallback={<LoadingSpinner />}>
@@ -85,6 +73,8 @@ export default function Home() {
             outlines={outlines}
           />
         </Suspense>
+        <Title />
+        <Socials />
       </PageContainer>
     </>
   );

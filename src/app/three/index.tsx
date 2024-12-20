@@ -5,7 +5,6 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useTexture, Environment } from "@react-three/drei";
 import { Physics, useSphere } from "@react-three/cannon";
 import { EffectComposer, N8AO, SMAA, Bloom } from "@react-three/postprocessing";
-import { useControls } from "leva";
 import { Outlines } from "./Outlines";
 import { Mesh } from "three";
 
