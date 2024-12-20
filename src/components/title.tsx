@@ -15,7 +15,7 @@ const libreBarcode = localFont({
 export const Wrapper: React.FC<WrapperProps> = ({ children }) => {
   return (
     <div
-      className={` absolute top-0 left-0 w-full sm:w-2/3 float-left p-8 z-50`}
+      className={`absolute top-0 left-0 w-full sm:w-2/3 float-left p-8 z-50 flex items-center justify-center sm:justify-start`}
     >
       {children}
     </div>
@@ -25,7 +25,9 @@ export const Wrapper: React.FC<WrapperProps> = ({ children }) => {
 export default function Title() {
   return (
     <Wrapper>
-      <div className={`${libreBarcode.className} text-6xl bg-transparent`}>
+      <div
+        className={`${libreBarcode.className} text-5xl sm:text-6xl lg:text-7xl bg-transparent text-center text-black`}
+      >
         Devin Sweeting
       </div>
     </Wrapper>
