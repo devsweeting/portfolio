@@ -1,44 +1,23 @@
-import { useState, useEffect } from "react";
-// useLayoutEffect
-// import { debounce } from "lodash";
+import { useState, useLayoutEffect } from "react";
 
-// const BREAKPOINT = 768;
-// const useIsMobile = (): boolean => {
-//   const [isMobile, setIsMobile] = useState(false);
-
-//   useEffect(() => {
-//     const handleResize = () => {
-//       setIsMobile(window.innerWidth <= BREAKPOINT);
-//     };
-
-//     window.addEventListener("resize", handleResize);
-//     return () => {
-//       window.removeEventListener("resize", handleResize);
-//     };
-//   }, [BREAKPOINT]);
-
-//   return isMobile;
-// };
-
-// export default useIsMobile;
-
-const useIsMobile = (breakpoint = 768) => {
+export default function useIsMobile(breakpoint = 768): boolean {
   const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
+  //   runs synchronously after React has performed all DOM mutations but before the browser paints. This ensures the isMobile state is updated as early as possible, avoiding potential visual mismatches during the first render.
+  useLayoutEffect(() => {
     if (typeof window !== "undefined") {
-      const handleResize: () => void = () => {
-        setIsMobile(window.innerWidth <= breakpoint);
-      };
+      const handleResize = () => setIsMobile(window.innerWidth < breakpoint);
 
+      // Perform initial check
+      handleResize();
+
+      // Add event listener for resizing
       window.addEventListener("resize", handleResize);
-      return () => {
-        window.removeEventListener("resize", handleResize);
-      };
+
+      // Cleanup on unmount
+      return () => window.removeEventListener("resize", handleResize);
     }
   }, [breakpoint]);
 
   return isMobile;
-};
-
-export default useIsMobile;
+}
