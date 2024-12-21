@@ -68,6 +68,7 @@ export default function Home() {
             sphereColor={sphereColor}
             image={image}
             outlines={outlines}
+            isMobile={isMobile}
           />
         </Suspense>
         <Title />
