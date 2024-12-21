@@ -26,7 +26,7 @@ export default function Spheres({
   sphereColor = "#ffffff",
   outlines = 0.0,
   image = "/images/cross.jpg",
-  isMobile = "false",
+  isMobile = false,
 }: {
   background: string;
   brightness: number;
