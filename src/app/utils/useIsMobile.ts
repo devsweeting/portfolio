@@ -6,9 +6,6 @@ const useIsMobile = (mobileScreenSize = 768) => {
     throw Error("matchMedia not supported by browser!");
   }
 
-  if (typeof window === "undefined") {
-    throw Error("Window is undefined in hook");
-  }
   const [isMobile, setIsMobile] = React.useState(
     window.matchMedia(`(max-width: ${mobileScreenSize}px)`).matches
   );
@@ -18,23 +15,25 @@ const useIsMobile = (mobileScreenSize = 768) => {
   }, []);
 
   React.useEffect(() => {
-    const mediaListener = window.matchMedia(
-      `(max-width: ${mobileScreenSize}px)`
-    );
-    // try catch used to fallback for browser compatibility
-    try {
-      mediaListener.addEventListener("change", checkIsMobile);
-    } catch {
-      mediaListener.addListener(checkIsMobile);
-    }
-
-    return () => {
+    if (typeof window !== "undefined") {
+      const mediaListener = window.matchMedia(
+        `(max-width: ${mobileScreenSize}px)`
+      );
+      // try catch used to fallback for browser compatibility
       try {
-        mediaListener.removeEventListener("change", checkIsMobile);
+        mediaListener.addEventListener("change", checkIsMobile);
       } catch {
-        mediaListener.removeListener(checkIsMobile);
+        mediaListener.addListener(checkIsMobile);
       }
-    };
+
+      return () => {
+        try {
+          mediaListener.removeEventListener("change", checkIsMobile);
+        } catch {
+          mediaListener.removeListener(checkIsMobile);
+        }
+      };
+    }
   }, [mobileScreenSize]);
   return isMobile;
 };
