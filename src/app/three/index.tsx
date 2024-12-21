@@ -26,20 +26,18 @@ export default function Spheres({
   sphereColor = "#ffffff",
   outlines = 0.0,
   image = "/images/cross.jpg",
-  isMobile = false,
 }: {
   background: string;
   brightness: number;
   sphereColor: string;
   outlines: number;
   image: string;
-  isMobile: boolean;
 }) {
-  // const isMobile = useIsMobile();
+  const isMobile = useIsMobile();
 
-  // React.useEffect(() => {
-  //   console.log("isMobile: ", isMobile);
-  // }, [isMobile]);
+  React.useEffect(() => {
+    console.log("isMobile: ", isMobile);
+  }, [isMobile]);
 
   return (
     <Canvas

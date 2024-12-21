@@ -59,7 +59,10 @@ export default function Home() {
   return (
     <>
       <PageContainer>
-        {isMobile ? <Leva fill flat collapsed /> : <Leva />}
+        {/* {isMobile ? <Leva fill flat collapsed /> : <Leva />} */}
+        <Leva fill={isMobile} flat={isMobile} collapsed={true} />
+        <Title />
+        <Socials />
 
         <Suspense fallback={<LoadingSpinner />}>
           <Spheres
@@ -68,11 +71,9 @@ export default function Home() {
             sphereColor={sphereColor}
             image={image}
             outlines={outlines}
-            isMobile={isMobile}
+            // isMobile={isMobile}
           />
         </Suspense>
-        <Title />
-        <Socials />
       </PageContainer>
     </>
   );
