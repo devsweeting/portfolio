@@ -1,40 +1,41 @@
-"use client";
-import * as React from "react";
+import { useState, useEffect } from "react";
+// useLayoutEffect
+// import { debounce } from "lodash";
 
-const useIsMobile = (mobileScreenSize = 768) => {
-  if (typeof window.matchMedia !== "function") {
-    throw Error("matchMedia not supported by browser!");
-  }
+// const BREAKPOINT = 768;
+// const useIsMobile = (): boolean => {
+//   const [isMobile, setIsMobile] = useState(false);
 
-  const [isMobile, setIsMobile] = React.useState(
-    window.matchMedia(`(max-width: ${mobileScreenSize}px)`).matches
-  );
+//   useEffect(() => {
+//     const handleResize = () => {
+//       setIsMobile(window.innerWidth <= BREAKPOINT);
+//     };
 
-  const checkIsMobile = React.useCallback((event: MediaQueryListEvent) => {
-    setIsMobile(event.matches);
-  }, []);
+//     window.addEventListener("resize", handleResize);
+//     return () => {
+//       window.removeEventListener("resize", handleResize);
+//     };
+//   }, [BREAKPOINT]);
 
-  React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      const mediaListener = window.matchMedia(
-        `(max-width: ${mobileScreenSize}px)`
-      );
-      // try catch used to fallback for browser compatibility
-      try {
-        mediaListener.addEventListener("change", checkIsMobile);
-      } catch {
-        mediaListener.addListener(checkIsMobile);
-      }
+//   return isMobile;
+// };
 
-      return () => {
-        try {
-          mediaListener.removeEventListener("change", checkIsMobile);
-        } catch {
-          mediaListener.removeListener(checkIsMobile);
-        }
-      };
-    }
-  }, [mobileScreenSize]);
+// export default useIsMobile;
+
+const useIsMobile = (breakpoint = 768) => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= breakpoint);
+
+  useEffect(() => {
+    const handleResize: () => void = () => {
+      setIsMobile(window.innerWidth <= breakpoint);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [breakpoint]);
+
   return isMobile;
 };
 
