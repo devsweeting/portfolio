@@ -59,8 +59,8 @@ export default function Home() {
   return (
     <>
       <PageContainer>
-        {/* {isMobile ? <Leva fill flat collapsed /> : <Leva />} */}
-        <Leva fill={isMobile} flat={isMobile} collapsed={true} />
+        {isMobile ? <Leva fill flat collapsed={true} /> : <Leva />}
+        {/* <Leva fill={isMobile} flat={isMobile} collapsed={isMobile} /> */}
         <Title />
         <Socials />
 
