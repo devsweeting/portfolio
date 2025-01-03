@@ -10,7 +10,7 @@ let controlDefinitions = {
       "My Cat": "/images/mycat.png",
     },
     value: "/images/cross.jpg",
-    onChange: (v) => {
+    onChange: (v: string) => {
       localStorage.setItem("Image", JSON.stringify(v));
     },
     transient: false,
@@ -21,7 +21,7 @@ let controlDefinitions = {
     step: 0.01,
     min: 0,
     max: 0.05,
-    onChange: (v) => {
+    onChange: (v: number) => {
       localStorage.setItem("Outlines", JSON.stringify(v));
     },
     transient: false,
@@ -37,7 +37,7 @@ let controlDefinitions = {
       Purple: "#D212E1",
     },
     value: "#ffffff",
-    onChange: (v) => {
+    onChange: (v: string) => {
       localStorage.setItem("Color", JSON.stringify(v));
     },
     transient: false,
@@ -53,7 +53,7 @@ let controlDefinitions = {
       Purple: "#D148E1",
     },
     value: "#dfdfdf",
-    onChange: (v) => {
+    onChange: (v: string) => {
       localStorage.setItem("Background", JSON.stringify(v));
     },
     transient: false,
@@ -64,7 +64,7 @@ let controlDefinitions = {
     step: 0.5,
     min: 0,
     max: 2.5,
-    onChange: (v) => {
+    onChange: (v: number) => {
       localStorage.setItem("Brightness", JSON.stringify(v));
     },
     transient: false,
@@ -89,8 +89,8 @@ export const useLocalBlobControls = () => {
           const parsedValue = JSON.parse(controlValueInStorage);
           // Ensure valid value type for outlines
           if (
-            control.label === "Outlines" ||
-            (control.label === "Brightness" && typeof parsedValue !== "number")
+            (control.label === "Outlines" || control.label === "Brightness") &&
+            typeof parsedValue !== "number"
           ) {
             throw new Error(
               `Invalid value type for "${control.label}". Expected a number.`
