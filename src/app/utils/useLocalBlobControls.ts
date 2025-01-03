@@ -83,7 +83,8 @@ export const useLocalBlobControls = () => {
       localStorage.setItem(control.label, JSON.stringify(control.value));
     } else {
       // Set localStorage value to controlDefinitions
-      const definition = controlDefinitions[control.label.toLowerCase()];
+      const definition =
+        controlDefinitions[control.label.toLowerCase() as string];
       if (definition) {
         try {
           const parsedValue = JSON.parse(controlValueInStorage);
