@@ -1,7 +1,9 @@
 "use client";
 import { Leva, useControls } from "leva";
 
-let controlDefinitions = {
+type ControlDefinitions = Record<string, { label: string; value: any }>;
+
+let controlDefinitions: ControlDefinitions = {
   image: {
     label: "Image",
     options: {
@@ -83,8 +85,8 @@ export const useLocalBlobControls = () => {
       localStorage.setItem(control.label, JSON.stringify(control.value));
     } else {
       // Set localStorage value to controlDefinitions
-      const definition =
-        controlDefinitions[control.label.toLowerCase() as string];
+      const key: string = control.label.toLowerCase();
+      const definition = controlDefinitions[key];
       if (definition) {
         try {
           const parsedValue = JSON.parse(controlValueInStorage);
