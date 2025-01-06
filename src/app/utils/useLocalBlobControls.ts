@@ -1,6 +1,5 @@
 "use client";
 import { useControls } from "leva";
-import { useEffect } from "react";
 
 type ControlDefinition =
   | {
@@ -99,6 +98,13 @@ export const useLocalBlobControls = (): {
   background: string;
   brightness: number;
 } => {
+  // Check if each label exists in localStorage
+  if (typeof window === "undefined") {
+    console.log("The window object is not available in this environment.");
+  } else {
+    console.log(window.localStorage); // This will throw an error on the server side
+  }
+
   if (typeof window !== "undefined") {
     Object.values(controlDefinitions).forEach((control) => {
       const controlValueInStorage = localStorage.getItem(control.label);
@@ -146,6 +152,8 @@ export const useLocalBlobControls = (): {
         }
       }
     });
+  } else {
+    console.error("The window object is not available in this environment.");
   }
 
   const schema = Object.keys(controlDefinitions).reduce((acc, key) => {
