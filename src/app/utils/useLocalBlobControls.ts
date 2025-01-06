@@ -1,7 +1,7 @@
 "use client";
 import { Leva, useControls } from "leva";
 
-type ControlDefinitions = Record<string, string>;
+type ControlDefinitions = Record<string, string | number>;
 
 let controlDefinitions: ControlDefinitions = {
   image: {
