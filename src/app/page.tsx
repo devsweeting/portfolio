@@ -37,7 +37,6 @@ export default function Home() {
             sphereColor={color}
             image={image}
             outlines={outlines}
-            // isMobile={isMobile}
           />
         </Suspense>
       </PageContainer>

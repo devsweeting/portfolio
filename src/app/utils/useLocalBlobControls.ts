@@ -1,7 +1,25 @@
 "use client";
 import { Leva, useControls } from "leva";
 
-type ControlDefinitions = Record<string, string | number>;
+type ControlDefinition =
+  | {
+      label: string;
+      options: Record<string, string>; // For dropdown controls
+      value: string;
+      onChange: (v: string) => void;
+      transient: boolean;
+    }
+  | {
+      label: string;
+      value: number;
+      step: number;
+      min: number;
+      max: number;
+      onChange: (v: number) => void;
+      transient: boolean;
+    };
+
+type ControlDefinitions = Record<string, ControlDefinition>;
 
 let controlDefinitions: ControlDefinitions = {
   image: {
@@ -73,7 +91,13 @@ let controlDefinitions: ControlDefinitions = {
   },
 };
 
-export const useLocalBlobControls = () => {
+export const useLocalBlobControls = (): {
+  image: string;
+  outlines: number;
+  color: string;
+  background: string;
+  brightness: number;
+} => {
   // Check if each label exists in localStorage
   Object.values(controlDefinitions).forEach((control) => {
     const controlValueInStorage = localStorage.getItem(control.label);
@@ -121,8 +145,28 @@ export const useLocalBlobControls = () => {
     }
   });
 
+  const schema = Object.keys(controlDefinitions).reduce((acc, key) => {
+    const control = controlDefinitions[key];
+    if ("options" in control) {
+      acc[key] = {
+        label: control.label,
+        options: control.options,
+        value: control.value,
+      };
+    } else {
+      acc[key] = {
+        label: control.label,
+        value: control.value,
+        step: control.step,
+        min: control.min,
+        max: control.max,
+      };
+    }
+    return acc;
+  }, {} as Record<string, any>);
+
   const { image, outlines, color, background, brightness } =
-    useControls(controlDefinitions);
+    useControls(schema);
 
   return { image, outlines, color, background, brightness };
 };
