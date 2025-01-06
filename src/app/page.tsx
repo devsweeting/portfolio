@@ -14,6 +14,12 @@ export default function Home() {
   const { image, outlines, color, background, brightness } =
     useLocalBlobControls();
 
+  console.log("image: ", image);
+  console.log("outlines: ", outlines);
+  console.log("color: ", color);
+  console.log("background: ", background);
+  console.log("brightness: ", brightness);
+
   const isMobile = useIsMobile();
 
   return (
