@@ -99,14 +99,7 @@ export const useLocalBlobControls = (): {
   background: string;
   brightness: number;
 } => {
-  // Check if each label exists in localStorage
-  if (typeof window === "undefined") {
-    console.log("The window object is not available in this environment.");
-  } else {
-    console.log(window.localStorage); // This will throw an error on the server side
-  }
-
-  useEffect(() => {
+  if (typeof window !== "undefined") {
     Object.values(controlDefinitions).forEach((control) => {
       const controlValueInStorage = localStorage.getItem(control.label);
       const existsInStorage = controlValueInStorage !== null;
@@ -153,7 +146,7 @@ export const useLocalBlobControls = (): {
         }
       }
     });
-  }, []);
+  }
 
   const schema = Object.keys(controlDefinitions).reduce((acc, key) => {
     const control = controlDefinitions[key];
