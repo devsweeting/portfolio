@@ -1,5 +1,6 @@
 "use client";
-import { Leva, useControls } from "leva";
+import { useControls } from "leva";
+import { useEffect } from "react";
 
 type ControlDefinition =
   | {
@@ -99,51 +100,60 @@ export const useLocalBlobControls = (): {
   brightness: number;
 } => {
   // Check if each label exists in localStorage
-  Object.values(controlDefinitions).forEach((control) => {
-    const controlValueInStorage = localStorage.getItem(control.label);
-    const existsInStorage = controlValueInStorage !== null;
-    console.log(
-      `Label "${control.label}" exists in localStorage: ${existsInStorage} -- ${controlValueInStorage}`
-    );
-    if (!existsInStorage) {
-      localStorage.setItem(control.label, JSON.stringify(control.value));
-    } else {
-      // Set localStorage value to controlDefinitions
-      const key: keyof ControlDefinitions =
-        control.label.toLowerCase() as string;
-      const definition = controlDefinitions[key];
+  if (typeof window === "undefined") {
+    console.log("The window object is not available in this environment.");
+  } else {
+    console.log(window.localStorage); // This will throw an error on the server side
+  }
 
-      // Check and assign the value
-      //   if (definition && typeof definition.value === "string") {
-      //     console.log("Value is a string:", definition.value);
-      //   } else {
-      //     console.log("Value is not a string:", definition.value);
-      //   }
-
-      if (definition) {
-        try {
-          const parsedValue = JSON.parse(controlValueInStorage);
-          // Ensure valid value type for outlines
-          if (
-            (control.label === "Outlines" || control.label === "Brightness") &&
-            typeof parsedValue !== "number"
-          ) {
-            throw new Error(
-              `Invalid value type for "${control.label}". Expected a number.`
-            );
-          }
-
-          definition.value = parsedValue;
-        } catch (error) {
-          console.error(`Error parsing value for "${control.label}":`, error);
-        }
+  useEffect(() => {
+    Object.values(controlDefinitions).forEach((control) => {
+      const controlValueInStorage = localStorage.getItem(control.label);
+      const existsInStorage = controlValueInStorage !== null;
+      console.log(
+        `Label "${control.label}" exists in localStorage: ${existsInStorage} -- ${controlValueInStorage}`
+      );
+      if (!existsInStorage) {
+        localStorage.setItem(control.label, JSON.stringify(control.value));
       } else {
-        console.error(
-          `Definition not found for label "${control.label.toLowerCase()}".`
-        );
+        // Set localStorage value to controlDefinitions
+        const key: keyof ControlDefinitions =
+          control.label.toLowerCase() as string;
+        const definition = controlDefinitions[key];
+
+        // Check and assign the value
+        //   if (definition && typeof definition.value === "string") {
+        //     console.log("Value is a string:", definition.value);
+        //   } else {
+        //     console.log("Value is not a string:", definition.value);
+        //   }
+
+        if (definition) {
+          try {
+            const parsedValue = JSON.parse(controlValueInStorage);
+            // Ensure valid value type for outlines
+            if (
+              (control.label === "Outlines" ||
+                control.label === "Brightness") &&
+              typeof parsedValue !== "number"
+            ) {
+              throw new Error(
+                `Invalid value type for "${control.label}". Expected a number.`
+              );
+            }
+
+            definition.value = parsedValue;
+          } catch (error) {
+            console.error(`Error parsing value for "${control.label}":`, error);
+          }
+        } else {
+          console.error(
+            `Definition not found for label "${control.label.toLowerCase()}".`
+          );
+        }
       }
-    }
-  });
+    });
+  }, []);
 
   const schema = Object.keys(controlDefinitions).reduce((acc, key) => {
     const control = controlDefinitions[key];
