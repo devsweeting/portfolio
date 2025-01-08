@@ -1,5 +1,5 @@
 "use client";
-import { useControls } from "leva";
+import { Leva, useControls } from "leva";
 
 type ControlDefinition =
   | {
@@ -21,7 +21,7 @@ type ControlDefinition =
 
 type ControlDefinitions = Record<string, ControlDefinition>;
 
-let controlDefinitions: ControlDefinitions = {
+let controlDefinitions = {
   image: {
     label: "Image",
     options: {
@@ -99,85 +99,54 @@ export const useLocalBlobControls = (): {
   brightness: number;
 } => {
   // Check if each label exists in localStorage
-  if (typeof window === "undefined") {
-    console.log("The window object is not available in this environment.");
-  } else {
-    console.log(window.localStorage); // This will throw an error on the server side
-  }
-
-  if (typeof window !== "undefined") {
-    Object.values(controlDefinitions).forEach((control) => {
-      const controlValueInStorage = localStorage.getItem(control.label);
-      const existsInStorage = controlValueInStorage !== null;
-      console.log(
-        `Label "${control.label}" exists in localStorage: ${existsInStorage} -- ${controlValueInStorage}`
-      );
-      if (!existsInStorage) {
-        localStorage.setItem(control.label, JSON.stringify(control.value));
-      } else {
-        // Set localStorage value to controlDefinitions
-        const key: keyof ControlDefinitions =
-          control.label.toLowerCase() as string;
-        const definition = controlDefinitions[key];
-
-        // Check and assign the value
-        //   if (definition && typeof definition.value === "string") {
-        //     console.log("Value is a string:", definition.value);
-        //   } else {
-        //     console.log("Value is not a string:", definition.value);
-        //   }
-
-        if (definition) {
-          try {
-            const parsedValue = JSON.parse(controlValueInStorage);
-            // Ensure valid value type for outlines
-            if (
-              (control.label === "Outlines" ||
-                control.label === "Brightness") &&
-              typeof parsedValue !== "number"
-            ) {
-              throw new Error(
-                `Invalid value type for "${control.label}". Expected a number.`
-              );
-            }
-
-            definition.value = parsedValue;
-          } catch (error) {
-            console.error(`Error parsing value for "${control.label}":`, error);
-          }
-        } else {
-          console.error(
-            `Definition not found for label "${control.label.toLowerCase()}".`
-          );
-        }
-      }
-    });
-  } else {
-    console.error("The window object is not available in this environment.");
-  }
-
-  const schema = Object.keys(controlDefinitions).reduce((acc, key) => {
-    const control = controlDefinitions[key];
-    if ("options" in control) {
-      acc[key] = {
-        label: control.label,
-        options: control.options,
-        value: control.value,
-      };
+  Object.values(controlDefinitions).forEach((control) => {
+    const controlValueInStorage = localStorage.getItem(control.label);
+    const existsInStorage = controlValueInStorage !== null;
+    console.log(
+      `Label "${control.label}" exists in localStorage: ${existsInStorage} -- ${controlValueInStorage}`
+    );
+    if (!existsInStorage) {
+      localStorage.setItem(control.label, JSON.stringify(control.value));
     } else {
-      acc[key] = {
-        label: control.label,
-        value: control.value,
-        step: control.step,
-        min: control.min,
-        max: control.max,
-      };
+      // Set localStorage value to controlDefinitions
+      const key: keyof ControlDefinitions =
+        control.label.toLowerCase() as string;
+      const definition = controlDefinitions[key];
+
+      // Check and assign the value
+      //   if (definition && typeof definition.value === "string") {
+      //     console.log("Value is a string:", definition.value);
+      //   } else {
+      //     console.log("Value is not a string:", definition.value);
+      //   }
+
+      if (definition) {
+        try {
+          const parsedValue = JSON.parse(controlValueInStorage);
+          // Ensure valid value type for outlines
+          if (
+            (control.label === "Outlines" || control.label === "Brightness") &&
+            typeof parsedValue !== "number"
+          ) {
+            throw new Error(
+              `Invalid value type for "${control.label}". Expected a number.`
+            );
+          }
+
+          definition.value = parsedValue;
+        } catch (error) {
+          console.error(`Error parsing value for "${control.label}":`, error);
+        }
+      } else {
+        console.error(
+          `Definition not found for label "${control.label.toLowerCase()}".`
+        );
+      }
     }
-    return acc;
-  }, {} as Record<string, any>);
+  });
 
   const { image, outlines, color, background, brightness } =
-    useControls(schema);
+    useControls(controlDefinitions);
 
   return { image, outlines, color, background, brightness };
 };
