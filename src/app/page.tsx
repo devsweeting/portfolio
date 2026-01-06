@@ -11,7 +11,7 @@ import useIsMobile from "./utils/useIsMobile";
 import { useLocalBlobControls } from "./utils/useLocalBlobControls";
 
 export default function Home() {
-  const { image, outlines, color, background, brightness } =
+  const { image, outlines, color, background, brightness, polish } =
     useLocalBlobControls();
 
   console.log("image: ", image);
@@ -19,6 +19,7 @@ export default function Home() {
   console.log("color: ", color);
   console.log("background: ", background);
   console.log("brightness: ", brightness);
+  console.log("polish: ", polish);
 
   const isMobile = useIsMobile();
 
@@ -38,6 +39,7 @@ export default function Home() {
             sphereColor={color}
             image={image}
             outlines={outlines}
+            reflectLevel={polish}
           />
         </Suspense>
       </PageContainer>

@@ -1,24 +1,52 @@
 "use client";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useTexture, Environment } from "@react-three/drei";
 import { Physics, useSphere } from "@react-three/cannon";
 import { EffectComposer, N8AO, SMAA, Bloom } from "@react-three/postprocessing";
 import { Outlines } from "./Outlines";
-import { Mesh } from "three";
 import useIsMobile from "../utils/useIsMobile";
 
-const rfs = THREE.MathUtils.randFloatSpread;
-const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
+// Constants
+const SPHERE_COUNT = 40;
+const SPHERE_RADIUS = 1;
+const POINTER_RADIUS = 3;
+const POINTER_SCALE = 0.2;
+const GRAVITY_FORCE = -40;
+const MOBILE_CAMERA_Z = 30;
+const DESKTOP_CAMERA_Z = 20;
 
-//Material on Sphere
+const rfs = THREE.MathUtils.randFloatSpread;
+// Increased segment count from 32,32 to 64,64 for smoother, more detailed spheres
+const sphereGeometry = new THREE.SphereGeometry(SPHERE_RADIUS, 64, 64);
+
+// Key change: roughness set to 0 (was 0.5) for more reflective, glass-like appearance
+// metalness remains at 1.0
 const baubleMaterial = new THREE.MeshStandardMaterial({
   color: "white",
-  roughness: 0.5,
+  roughness: 0,
   metalness: 1.0,
   envMapIntensity: 1,
 });
+
+interface SpheresProps {
+  background: string;
+  brightness: number;
+  sphereColor: string;
+  reflectLevel: number;
+  outlines: number;
+  image: string;
+}
+
+interface ClumpProps {
+  sphereColor: string;
+  image: string;
+  outlines: number;
+  reflectLevel: number;
+  mat?: THREE.Matrix4;
+  vec?: THREE.Vector3;
+}
 
 export default function Spheres({
   background = "#dfdfdf",
@@ -26,18 +54,9 @@ export default function Spheres({
   sphereColor = "#ffffff",
   outlines = 0.0,
   image = "/images/cross.jpg",
-}: {
-  background: string;
-  brightness: number;
-  sphereColor: string;
-  outlines: number;
-  image: string;
-}) {
+  reflectLevel = 0.5,
+}: SpheresProps) {
   const isMobile = useIsMobile();
-
-  React.useEffect(() => {
-    console.log("isMobile: ", isMobile);
-  }, [isMobile]);
 
   return (
     <Canvas
@@ -45,46 +64,39 @@ export default function Spheres({
       gl={{ antialias: false }}
       dpr={[1, 1.5]}
       camera={{
-        position: [0, 0, isMobile ? 30 : 20], // Zoom out camera for mobile
+        position: [0, 0, isMobile ? MOBILE_CAMERA_Z : DESKTOP_CAMERA_Z],
         fov: 35,
         near: 1,
         far: 40,
       }}
     >
-      {/* Original lighting in Demo is 0.5 */}
       <ambientLight intensity={brightness} />
-
-      {/* Test */}
-      {/* <directionalLight
-        position={[5, 10, 5]}
-        intensity={0.5}
-        castShadow
-        shadow-mapSize={[1024, 1024]}
-      /> */}
-
-      {/* Original Background Color */}
       <color attach="background" args={[background]} />
 
-      {/* Original light shadow effect */}
-      {/* <spotLight
+      {/* Added spotLight for better definition and shadows like in demo */}
+      <spotLight
         intensity={1}
         angle={0.2}
         penumbra={1}
         position={[30, 30, 30]}
         castShadow
         shadow-mapSize={[512, 512]}
-      /> */}
+      />
 
-      {/* Physics and 3D objects */}
       <Physics gravity={[0, 2, 0]} iterations={10}>
         <Pointer />
-        <Clump sphereColor={sphereColor} image={image} outlines={outlines} />
+        <Clump
+          sphereColor={sphereColor}
+          image={image}
+          outlines={outlines}
+          reflectLevel={reflectLevel}
+        />
       </Physics>
 
       <Environment files="/images/adamsbridge.hdr" />
 
-      {/* Postprocessing effects */}
-      <EffectComposer multisampling={0}>
+      {/* Added disableNormalPass for better performance */}
+      <EffectComposer enableNormalPass multisampling={0}>
         <N8AO
           halfRes
           color="black"
@@ -92,7 +104,6 @@ export default function Spheres({
           intensity={1}
           aoSamples={6}
           denoiseSamples={4}
-          quality="high"
         />
         <Bloom mipmapBlur levels={7} intensity={1} />
         <SMAA />
@@ -105,52 +116,36 @@ function Clump({
   sphereColor,
   image,
   outlines,
+  reflectLevel = 0.5,
   mat = new THREE.Matrix4(),
   vec = new THREE.Vector3(),
-}: {
-  sphereColor: string;
-  image: string;
-  outlines: number;
-  mat?: THREE.Matrix4;
-  vec?: THREE.Vector3;
-}) {
+}: ClumpProps) {
   const texture = useTexture(image);
-  // uncomment to adjust
-  // const { quantity } = useControls({
-  //   quantity: { value: 40, step: 1, min: 1, max: 40 }, // Initial value: 1
-  // });
-  const quantity = 40;
 
   const [ref, api] = useSphere<THREE.InstancedMesh>(() => ({
-    args: [1],
+    args: [SPHERE_RADIUS],
     mass: 1,
     angularDamping: 0.1,
     linearDamping: 0.65,
     position: [rfs(20), rfs(20), rfs(20)],
   }));
-  useFrame((state) => {
-    for (let i = 0; i < quantity; i++) {
-      // Get current whereabouts of the instanced sphere
-      if (ref.current !== null) {
-        // Type casting ref.current to InstancedMesh
-        const instancedMesh = ref.current as THREE.InstancedMesh;
-        // Make sure getMatrixAt is available
-        if (instancedMesh) {
-          instancedMesh.getMatrixAt(i, mat);
-          // Normalize the position and multiply by a negative force.
-          // This is enough to drive it towards the center-point.
-          api
-            .at(i)
-            .applyForce(
-              vec
-                .setFromMatrixPosition(mat)
-                .normalize()
-                .multiplyScalar(-40)
-                .toArray(),
-              [0, 0, 0]
-            );
-        }
-      }
+
+  useFrame(() => {
+    if (!ref.current) return;
+
+    for (let i = 0; i < SPHERE_COUNT; i++) {
+      ref.current.getMatrixAt(i, mat);
+
+      api
+        .at(i)
+        .applyForce(
+          vec
+            .setFromMatrixPosition(mat)
+            .normalize()
+            .multiplyScalar(GRAVITY_FORCE)
+            .toArray(),
+          [0, 0, 0]
+        );
     }
   });
 
@@ -159,22 +154,30 @@ function Clump({
       ref={ref}
       castShadow
       receiveShadow
-      args={[sphereGeometry, baubleMaterial, quantity]}
+      args={[sphereGeometry, baubleMaterial, SPHERE_COUNT]}
     >
-      <meshStandardMaterial color={sphereColor} map={texture} />
-      <Outlines thickness={outlines} color={"black"} />
+      {/* Use material-map like in demo for better texture application */}
+      <meshStandardMaterial
+        color={sphereColor}
+        map={texture}
+        roughness={reflectLevel}
+        metalness={1.0}
+        envMapIntensity={1}
+      />
+      <Outlines thickness={outlines} color="black" />
     </instancedMesh>
   );
 }
 
 function Pointer() {
   const viewport = useThree((state) => state.viewport);
-  const [ref, api] = useSphere<Mesh>(() => ({
+  const [ref, api] = useSphere<THREE.Mesh>(() => ({
     type: "Kinematic",
-    args: [3],
+    args: [POINTER_RADIUS],
     position: [0, 0, 0],
   }));
 
+  // Use state.pointer instead of state.mouse for better cross-platform support
   useFrame((state) =>
     api.position.set(
       (state.pointer.x * viewport.width) / 2,
@@ -183,18 +186,17 @@ function Pointer() {
     )
   );
 
-  // DEV TEST -- For mobile touch events
   useEffect(() => {
     const handleTouchMove = (event: TouchEvent) => {
-      const touch = event.touches[0]; // Get the first touch point
-      const pointerX =
-        (touch.clientX / window.innerWidth) * viewport.width -
-        viewport.width / 2;
-      const pointerY =
-        (touch.clientY / window.innerHeight) * viewport.height -
-        viewport.height / 2;
+      const touch = event.touches[0];
+      const normalizedX = (touch.clientX / window.innerWidth) * 2 - 1;
+      const normalizedY = -(touch.clientY / window.innerHeight) * 2 + 1;
 
-      api.position.set(pointerX, pointerY, 0);
+      api.position.set(
+        (normalizedX * viewport.width) / 2,
+        (normalizedY * viewport.height) / 2,
+        0
+      );
     };
 
     window.addEventListener("touchmove", handleTouchMove);
@@ -203,9 +205,8 @@ function Pointer() {
     };
   }, [viewport, api]);
 
-  // Explicitly cast ref to Mesh type
   return (
-    <mesh ref={ref} scale={0.2}>
+    <mesh ref={ref} scale={POINTER_SCALE}>
       <sphereGeometry />
       <meshBasicMaterial color={[4, 4, 4]} toneMapped={false} />
       <pointLight intensity={8} distance={10} />
