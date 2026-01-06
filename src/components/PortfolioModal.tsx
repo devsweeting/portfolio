@@ -103,7 +103,7 @@ const PortfolioModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             </p>
 
             <p>
-              So go ahead—play with the interactive elements. Change the
+              So go forth Play with the interactive elements. Change the
               settings, toss things around, stress-test it a little.
             </p>
           </div>
