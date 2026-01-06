@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Suspense } from "react";
 import { PageContainer } from "@/components/pageLayout";
 import Title from "@/components/title";
@@ -9,8 +9,10 @@ import Socials from "@/components/Socials";
 import { Leva } from "leva";
 import useIsMobile from "./utils/useIsMobile";
 import { useLocalBlobControls } from "./utils/useLocalBlobControls";
+import PortfolioModal from "@/components/PortfolioModal";
 
 export default function Home() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { image, outlines, color, background, brightness, polish } =
     useLocalBlobControls();
 
@@ -30,7 +32,7 @@ export default function Home() {
         {/* DEV NOTE : keep for later */}
         {/* <Leva fill={isMobile} flat={isMobile} collapsed={isMobile} /> */}
         <Title />
-        <Socials />
+        <Socials onOpenModal={() => setIsModalOpen(true)} />
 
         <Suspense fallback={<LoadingSpinner />}>
           <Spheres
@@ -43,6 +45,11 @@ export default function Home() {
           />
         </Suspense>
       </PageContainer>
+
+      <PortfolioModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </>
   );
 }
