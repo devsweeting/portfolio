@@ -36,12 +36,12 @@ const PortfolioModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
       onClick={onClose}
     >
       <div
-        className={`relative bg-gray-900 shadow-2xl w-full p-8 md:p-10 transition-all duration-300 transform ${
+        className={`relative bg-gray-900 shadow-2xl w-full transition-all duration-300 transform ${
           isMobile
-            ? `rounded-t-3xl max-h-[90vh] ${
+            ? `rounded-t-3xl max-h-[90vh] overflow-y-auto p-8 ${
                 isVisible ? "translate-y-0" : "translate-y-full"
               }`
-            : `rounded-2xl max-w-3xl mx-4 ${
+            : `rounded-2xl max-w-3xl mx-4 p-8 md:p-10 max-h-[85vh] overflow-y-auto ${
                 isVisible
                   ? "opacity-100 scale-100 translate-y-0"
                   : "opacity-0 scale-95 translate-y-4"
@@ -52,7 +52,7 @@ const PortfolioModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors"
+          className="sticky top-0 float-right text-gray-400 hover:text-white transition-colors z-10"
           aria-label="Close modal"
         >
           <svg
@@ -69,7 +69,7 @@ const PortfolioModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         </button>
 
         {/* Modal content */}
-        <div className="flex flex-col space-y-8 max-h-[80vh]">
+        <div className="space-y-8">
           {/* Header */}
           <div className="space-y-3">
             <h1 className="text-4xl md:text-5xl font-bold text-white">
@@ -83,10 +83,10 @@ const PortfolioModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           {/* Main content */}
           <div className="space-y-5 text-gray-300 leading-relaxed">
             <p>
-              My name is Devin Sweeting and let's be honest, a portfolio that's
-              just a neatly organized list of accomplishments isn't exactly
-              exciting. This page isn't about checking boxes; it's about showing
-              how I think, build, and experiment.
+              My name is Devin Sweeting and let&apos;s be honest, a portfolio
+              that&apos;s just a neatly organized list of accomplishments
+              isn&apos;t exactly exciting. This page isn&apos;t about checking
+              boxes; it&apos;s about showing how I think, build, and experiment.
             </p>
 
             <p>
@@ -97,9 +97,9 @@ const PortfolioModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             </p>
 
             <p>
-              Below you'll find links to other websites and projects I've worked
-              on. Each one represents a different idea, problem, or experiment I
-              wanted to chase down.
+              Below you&apos;ll find links to other websites and projects
+              I&apos;ve worked on. Each one represents a different idea,
+              problem, or experiment I wanted to chase down.
             </p>
 
             <p>
@@ -109,12 +109,12 @@ const PortfolioModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           </div>
 
           {/* Links Section */}
-          <div className="pt-6 border-t border-gray-700 flex flex-col min-h-0">
+          <div className="pt-6 border-t border-gray-700">
             <h3 className="text-2xl font-semibold text-white mb-4">
               Past Projects
             </h3>
 
-            <ul className="space-y-3 overflow-y-auto pr-2">
+            <ul className="space-y-3">
               <li>
                 <a
                   href="https://sweetingdev.in"
@@ -124,7 +124,7 @@ const PortfolioModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                 >
                   3D Portfolio — Curated WebGL & 3D modeling showcase
                   <svg
-                    className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"
+                    className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform flex-shrink-0"
                     fill="none"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -147,7 +147,7 @@ const PortfolioModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                   Ride Report Marketing Site — HubSpot-powered marketing &
                   internal app support
                   <svg
-                    className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"
+                    className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform flex-shrink-0"
                     fill="none"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -170,7 +170,7 @@ const PortfolioModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                   Ride Report Open Data Portal — React-based city data
                   visualization platform
                   <svg
-                    className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"
+                    className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform flex-shrink-0"
                     fill="none"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -193,7 +193,7 @@ const PortfolioModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                   Protalus Shopify Store — Performance-focused Shopify rebuild
                   using Liquid
                   <svg
-                    className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"
+                    className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform flex-shrink-0"
                     fill="none"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -216,7 +216,7 @@ const PortfolioModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                   BlackBerri Design — Fully custom Shopify theme for design
                   retailer
                   <svg
-                    className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"
+                    className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform flex-shrink-0"
                     fill="none"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -239,7 +239,7 @@ const PortfolioModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                   Rose City Justice — WordPress site for local social justice
                   initiatives
                   <svg
-                    className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"
+                    className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform flex-shrink-0"
                     fill="none"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -261,7 +261,7 @@ const PortfolioModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                 >
                   JumpCo — Pre-launch blockchain transaction app MVP
                   <svg
-                    className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"
+                    className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform flex-shrink-0"
                     fill="none"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -284,7 +284,7 @@ const PortfolioModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                   The Fire DJs — Ongoing WordPress support for DJ booking
                   platform
                   <svg
-                    className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"
+                    className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform flex-shrink-0"
                     fill="none"
                     strokeLinecap="round"
                     strokeLinejoin="round"

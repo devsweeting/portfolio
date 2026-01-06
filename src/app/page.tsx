@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Suspense } from "react";
 import { PageContainer } from "@/components/pageLayout";
 import Title from "@/components/title";
@@ -24,6 +24,18 @@ export default function Home() {
   console.log("polish: ", polish);
 
   const isMobile = useIsMobile();
+
+  useEffect(() => {
+    // Check if user has visited before
+    const hasVisited = localStorage.getItem("hasVisitedBefore");
+
+    if (!hasVisited) {
+      // First time visitor - show modal
+      setIsModalOpen(true);
+      // Mark as visited
+      localStorage.setItem("hasVisitedBefore", "true");
+    }
+  }, []);
 
   return (
     <>

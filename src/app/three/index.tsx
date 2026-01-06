@@ -93,7 +93,7 @@ export default function Spheres({
         />
       </Physics>
 
-      <Environment files="/images/adamsbridge.hdr" />
+      <Environment files="/images/sphereChrome.jpg" />
 
       {/* Added disableNormalPass for better performance */}
       <EffectComposer enableNormalPass multisampling={0}>
