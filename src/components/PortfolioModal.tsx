@@ -76,7 +76,7 @@ const PortfolioModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
               Hi Stranger!
             </h1>
             <h2 className="text-2xl md:text-3xl font-semibold text-gray-300">
-              Welcome to my Portfolio
+              Welcome to my Site
             </h2>
           </div>
 
@@ -90,10 +90,19 @@ const PortfolioModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             </p>
 
             <p>
-              I created this site as a space to show a little personality. Why
-              tell you what I can do when I can show you instead? From the
-              visuals to the interactions, everything here is intentional—built
-              to be explored, clicked, dragged, and occasionally broken.
+              I created this site as a space to show a little personality and to
+              deep dive into{" "}
+              <a
+                href="https://r3f.docs.pmnd.rs/getting-started/introduction"
+                target="_blank"
+                className="text-blue-500 hover:underline cursor-pointer"
+                rel="noopener noreferrer"
+              >
+                React-three-fiber
+              </a>
+              . So why tell you what I can do, when I can show you instead? From
+              the visuals to the interactions, everything here is intentional.
+              Built to be explored, clicked, dragged, and occasionally broken.
             </p>
 
             <p>
@@ -103,7 +112,7 @@ const PortfolioModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             </p>
 
             <p>
-              So go forth Play with the interactive elements. Change the
+              So go forth! Play with the interactive elements. Change the
               settings, toss things around, stress-test it a little.
             </p>
           </div>
@@ -111,32 +120,10 @@ const PortfolioModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           {/* Links Section */}
           <div className="pt-6 border-t border-gray-700">
             <h3 className="text-2xl font-semibold text-white mb-4">
-              Past Projects
+              A Neatly Organized List of Accomplishments
             </h3>
 
             <ul className="space-y-3">
-              <li>
-                <a
-                  href="https://sweetingdev.in"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300 hover:underline transition-colors text-base md:text-lg inline-flex items-center group"
-                >
-                  3D Portfolio — Curated WebGL & 3D modeling showcase
-                  <svg
-                    className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform flex-shrink-0"
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path d="M9 5l7 7-7 7"></path>
-                  </svg>
-                </a>
-              </li>
-
               <li>
                 <a
                   href="https://ridereport.com"
